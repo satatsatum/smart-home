@@ -3,23 +3,33 @@
 <head>
 <meta charset="utf8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Smart Home 3D - Isometric</title>
+<title>Smart Home 3D</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@400;500;600&family=IBM+Plex+Sans+Thai:wght@400;500&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg:#0e141c; --ink:#f3f6fa; --ink-dim:rgba(243,246,250,.66); --glass:rgba(10,16,26,.48);
-  --glass-strong:rgba(10,16,26,.72); --line:rgba(255,255,255,.16); --paper:#f7f9fc;
-  --paper-ink:#0e141c; --amber:#f2a516; --cool:#2a9df0; --mint:#27b98a;
+  --bg:#0e141c;
+  --ink:#f3f6fa;
+  --ink-dim:rgba(243,246,250,.66);
+  --glass:rgba(10,16,26,.48);
+  --glass-strong:rgba(10,16,26,.72);
+  --line:rgba(255,255,255,.16);
+  --paper:#f7f9fc;
+  --paper-ink:#0e141c;
+  --amber:#f2a516;
+  --cool:#2a9df0;
+  --mint:#27b98a;
   --font-display:'Prompt','IBM Plex Sans Thai',system-ui,sans-serif;
   --font-body:'IBM Plex Sans Thai','Prompt',system-ui,sans-serif;
   color-scheme:dark;
 }
 html,body{height:100%;overflow:hidden;margin:0;padding:0;font:14px var(--font-body);background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased}
-*{box-sizing:border-box} button{font:inherit;color:inherit;cursor:pointer}
+*{box-sizing:border-box}
+button{font:inherit;color:inherit;cursor:pointer}
 :focus-visible{outline:2px solid #fff;outline-offset:2px}
 .app{position:relative;height:100%;overflow:hidden;background:var(--bg)}
+
 .sky{position:absolute;inset:0;opacity:0;transition:opacity 1.2s ease}
 .sky.on{opacity:1}
 .sky.night{background:radial-gradient(1.2px 1.2px at 12% 14%,rgba(255,255,255,.7),transparent),radial-gradient(1px 1px at 28% 8%,rgba(255,255,255,.5),transparent),linear-gradient(180deg,#0b1017 0%,#16212e 55%,#26384b 100%)}
@@ -27,9 +37,10 @@ html,body{height:100%;overflow:hidden;margin:0;padding:0;font:14px var(--font-bo
 .sky.dusk{background:linear-gradient(180deg,#4d3322 0%,#8a5e3a 50%,#c99a68 100%)}
 .sky.rain{background:linear-gradient(180deg,#2c3846 0%,#4d6076 55%,#8196b0 100%)}
 .rain{position:absolute;inset:0;opacity:0;transition:opacity 1.2s;pointer-events:none;background:repeating-linear-gradient(100deg,transparent 0 23px,rgba(210,226,255,.2) 23px 24px);background-size:300px 300px;animation:rain .8s linear infinite}
-.rain.on{opacity:1} @keyframes rain{to{background-position:-60px 300px}}
+.rain.on{opacity:1}
+@keyframes rain{to{background-position:-60px 300px}}
 
-#stage{position:absolute;inset:0;touch-action:none;cursor:default} 
+#stage{position:absolute;inset:0;touch-action:none;cursor:default}
 #stage canvas{display:block;width:100%;height:100%}
 #pins{position:absolute;inset:0;pointer-events:none;overflow:hidden}
 
@@ -39,51 +50,70 @@ html,body{height:100%;overflow:hidden;margin:0;padding:0;font:14px var(--font-bo
 .pin .shape svg{width:18px;height:18px;transform:rotate(45deg);fill:none;stroke:rgba(255,255,255,.7);stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;transition:stroke .25s}
 .pin.on .shape{background:var(--paper);border-color:#fff;box-shadow:0 6px 16px rgba(0,0,0,.3),0 0 18px color-mix(in srgb,var(--pc) 55%,transparent)}
 .pin.on .shape svg{stroke:var(--pc)}
+.pin:hover .shape{scale:1.1}
 .pin.sel .shape{scale:1.16;box-shadow:0 0 0 3px rgba(255,255,255,.55),0 6px 16px rgba(0,0,0,.3)}
-.pin .val{position:absolute;left:21px;top:-37px;font:500 11px/1 var(--font-display);padding:4px 7px;border-radius:999px;background:var(--glass-strong);border:1px solid var(--line);white-space:nowrap}
+.pin .val{position:absolute;left:21px;top:-37px;font:500 11px/1 var(--font-display);padding:4px 7px;border-radius:999px;background:var(--glass-strong);border:1px solid var(--line);white-space:nowrap;font-variant-numeric:tabular-nums}
 .pin .val:empty{display:none}
 @keyframes pinIn{from{opacity:0;translate:0 8px}to{opacity:1;translate:0 0}}
 
-.ui{position:absolute;inset:0;pointer-events:none;padding:20px}
-.ui>*{pointer-events:auto}
-.head{position:absolute;top:20px;left:20px;right:20px;display:flex;justify-content:space-between;align-items:flex-start}
-.eyebrow{font:500 11px/1 var(--font-display);letter-spacing:.18em;color:var(--ink-dim)}
-h1{margin:6px 0 0;font:600 32px/1.1 var(--font-display)}
-.wx{display:flex;align-items:center;gap:8px;margin-top:8px;color:var(--ink-dim);font-size:13px}
-.wx svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.8}
-.stats{display:flex;gap:22px;margin-top:16px}
-.stat small{display:block;font-size:11px;color:var(--ink-dim)}
-.stat b{font:500 18px/1 var(--font-display)}
-.hint{margin-top:14px;max-width:280px;font-size:12px;line-height:1.5;color:var(--ink-dim)}
+.rtag{position:absolute;left:0;top:0;font:500 11px/1 var(--font-display);letter-spacing:.06em;color:rgba(255,255,255,.7);white-space:nowrap;pointer-events:none;text-shadow:0 1px 6px rgba(0,0,0,.6);font-variant-numeric:tabular-nums}
 
-.actions{display:flex;gap:8px;justify-content:flex-end}
+.ui{position:absolute;inset:0;pointer-events:none;padding-block:20px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.ui>*{pointer-events:auto}
+.head{position:absolute;top:20px;left:max(16px,env(safe-area-inset-left,0px));right:max(16px,env(safe-area-inset-right,0px));display:flex;justify-content:space-between;align-items:flex-start;gap:12px;pointer-events:none}
+.head>*{pointer-events:auto}
+.eyebrow{font:500 11px/1 var(--font-display);letter-spacing:.18em;color:var(--ink-dim)}
+h1{margin:6px 0 0;font:600 clamp(24px,4vw,32px)/1.1 var(--font-display);letter-spacing:.01em}
+.wx{display:flex;align-items:center;gap:8px;margin-top:8px;color:var(--ink-dim);font-size:13px}
+.wx svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.stats{display:flex;flex-wrap:wrap;gap:6px 22px;margin-top:16px}
+.stat small{display:block;font-size:11px;color:var(--ink-dim);margin-bottom:3px}
+.stat b{font:500 18px/1 var(--font-display);font-variant-numeric:tabular-nums}
+.hint{margin-top:14px;max-width:280px;font-size:12px;line-height:1.5;color:var(--ink-dim)}
+.actions{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
 .btn{height:38px;padding:0 14px;border-radius:999px;background:var(--glass);border:1px solid var(--line);backdrop-filter:blur(10px);font:500 13px var(--font-display);transition:background .2s}
 .btn:hover{background:var(--glass-strong)}
 
-.scenes{position:absolute;bottom:20px;left:50%;translate:-50% 0;display:flex;gap:8px;padding:2px}
-.chip{display:flex;align-items:center;gap:7px;height:40px;padding:0 14px;border-radius:999px;background:var(--glass);border:1px solid var(--line);backdrop-filter:blur(10px);font:500 13px var(--font-display);transition:background .2s,color .2s}
-.chip svg{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round}
+.scenes{position:absolute;bottom:20px;left:50%;translate:-50% 0;display:flex;gap:8px;max-width:calc(100% - 32px);overflow-x:auto;padding:2px}
+.chip{display:flex;align-items:center;gap:7px;height:40px;padding:0 14px;border-radius:999px;background:var(--glass);border:1px solid var(--line);backdrop-filter:blur(10px);font:500 13px var(--font-display);white-space:nowrap;flex:none;transition:background .2s,color .2s}
+.chip svg{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 .chip[aria-pressed="true"]{background:var(--paper);color:var(--paper-ink);border-color:#fff}
 
-#nogl{position:absolute;inset:0;display:grid;place-items:center;padding:24px;text-align:center;background:rgba(0,0,0,0.8);color:#fff;z-index:99}
-#nogl[hidden]{display:none}
-
-.panel{position:absolute;left:20px;bottom:76px;width:320px;border-radius:22px;background:var(--glass-strong);border:1px solid var(--line);backdrop-filter:blur(16px);padding:16px;box-shadow:0 18px 40px rgba(0,0,0,.35)}
+.panel{position:absolute;left:max(16px,env(safe-area-inset-left,0px));bottom:76px;width:min(330px,calc(100% - 32px));border-radius:22px;background:var(--glass-strong);border:1px solid var(--line);backdrop-filter:blur(16px);padding:16px;box-shadow:0 18px 40px rgba(0,0,0,.35);animation:rise .25s ease both}
 .panel[hidden]{display:none}
+@keyframes rise{from{opacity:0;translate:0 10px}to{opacity:1;translate:0 0}}
 .ph{display:flex;align-items:center;gap:12px}
 .pico{width:42px;height:42px;border-radius:14px;display:grid;place-items:center;background:var(--paper);flex:none}
-.pico svg{width:22px;height:22px;fill:none;stroke:var(--pc,var(--amber));stroke-width:1.8}
-.pt{flex:1} .pt h2{margin:0;font:500 16px var(--font-display)} .pt p{margin:3px 0 0;font-size:12.5px;color:var(--ink-dim)}
-#pClose{width:32px;height:32px;border-radius:50%;border:0;background:rgba(255,255,255,.1);font-size:18px}
+.pico svg{width:22px;height:22px;fill:none;stroke:var(--pc,var(--amber));stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.pt{min-width:0;flex:1}
+.pt h2{margin:0;font:500 16px/1.25 var(--font-display)}
+.pt p{margin:3px 0 0;font-size:12.5px;color:var(--ink-dim)}
+#pClose{width:32px;height:32px;border-radius:50%;border:0;background:rgba(255,255,255,.1);font-size:18px;line-height:1}
 .pb{display:grid;gap:14px;margin-top:14px}
-.row{display:flex;align-items:center;justify-content:space-between;font-size:13px}
-.sw{width:50px;height:30px;border-radius:999px;border:0;background:rgba(255,255,255,.2);position:relative;transition:background .2s}
+.row{display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:13px}
+.row output{font:500 13px var(--font-display);font-variant-numeric:tabular-nums}
+.note{margin:0;font-size:12px;line-height:1.5;color:var(--ink-dim)}
+.sw{width:50px;height:30px;border-radius:999px;border:0;background:rgba(255,255,255,.2);position:relative;transition:background .2s;flex:none}
 .sw i{position:absolute;top:3px;left:3px;width:24px;height:24px;border-radius:50%;background:#fff;transition:translate .2s}
-.sw[aria-checked="true"]{background:var(--mint)} .sw[aria-checked="true"] i{translate:20px 0}
-.big{font:500 30px/1 var(--font-display);text-align:center}
+.sw[aria-checked="true"]{background:var(--mint)}
+.sw[aria-checked="true"] i{translate:20px 0}
+input[type=range]{width:100%;accent-color:#fff;height:28px}
+.step{display:flex;align-items:center;gap:14px}
+.step button{width:40px;height:40px;border-radius:50%;border:1px solid var(--line);background:rgba(255,255,255,.1);font-size:20px}
+.step output{font:500 26px/1 var(--font-display);min-width:76px;text-align:center;font-variant-numeric:tabular-nums}
+
+#loading{position:absolute;inset:0;display:grid;place-items:center;padding:24px;text-align:center;color:var(--ink-dim);background:rgba(10,16,26,.55);backdrop-filter:blur(6px);z-index:50;font-size:14px;transition:opacity .4s}
+#loading.done{opacity:0;pointer-events:none}
+
+@media (max-width:700px){
+  .hint,.rtag{display:none}
+  .stats{gap:6px 16px}
+  .actions .btn{padding:0 12px}
+}
+@media (prefers-reduced-motion:reduce){
+  .rain,.pin,.panel{animation:none}
+}
 </style>
-</head>
-<body>
 
 <div class="app">
   <div class="sky night" data-sky="night"></div>
@@ -92,25 +122,27 @@ h1{margin:6px 0 0;font:600 32px/1.1 var(--font-display)}
   <div class="sky rain" data-sky="rain"></div>
   <div class="rain" id="rain"></div>
 
-  <div id="stage" aria-label="โมเดลบ้าน 3 มิติ (Isometric View)"></div>
+  <div id="stage" aria-label="โมเดลห้อง 3 มิติ (ล็อกมุม Isometric)"></div>
   <div id="pins"></div>
-  <div id="nogl" hidden></div>
+  <div id="loading" role="status">กำลังโหลดโมเดลห้อง…</div>
 
   <div class="ui">
     <div class="head">
       <div>
-        <div class="eyebrow">SMART HOME · ISOMETRIC VIEW</div>
-        <h1>บ้านของฉัน</h1>
+        <div class="eyebrow">SMART HOME · ข้อมูลตัวอย่าง</div>
+        <h1>ห้องของฉัน</h1>
         <div class="wx" id="wx"></div>
         <div class="stats">
-          <div class="stat"><small>ไฟที่เปิด</small><b id="stLights">0/4</b></div>
+          <div class="stat"><small>ไฟที่เปิด</small><b id="stLights">0/3</b></div>
           <div class="stat"><small>กำลังไฟ</small><b id="stPower">0 W</b></div>
-          <div class="stat"><small>อุณหภูมิในบ้าน</small><b id="stTemp">26.5°</b></div>
+          <div class="stat"><small>อุณหภูมิในห้อง</small><b id="stTemp">30.7°</b></div>
         </div>
-        <p class="hint">เลื่อนล้อเมาส์หรือหนีบนิ้วเพื่อซูมเข้า-ออก (ล็อกมุมกล้อง Isometric แบบภาพตัวอย่าง) กดหมุดเพื่อเปิดปิดค่าอุปกรณ์</p>
+        <p class="hint">เลื่อนล้อเมาส์หรือหนีบนิ้วเพื่อซูม กดหมุดเพื่อเปิดปิดและตั้งค่าอุปกรณ์</p>
       </div>
       <div class="actions">
         <button class="btn" id="allLights" type="button">ปิดไฟทั้งหมด</button>
+        <button class="btn" id="wallMode" type="button" aria-pressed="false">ผนังทึบ</button>
+        <button class="btn" id="resetView" type="button">รีเซ็ตมุมมอง</button>
       </div>
     </div>
 
@@ -118,37 +150,41 @@ h1{margin:6px 0 0;font:600 32px/1.1 var(--font-display)}
       <div class="ph">
         <span class="pico" id="pIcon"></span>
         <div class="pt"><h2 id="pName"></h2><p id="pSub"></p></div>
-        <button type="button" id="pClose" aria-label="ปิด">×</button>
+        <button type="button" id="pClose" aria-label="ปิดแผงควบคุม">×</button>
       </div>
       <div class="pb" id="pBody"></div>
     </aside>
 
-    <div class="scenes" id="scenes"></div>
+    <div class="scenes" id="scenes" role="group" aria-label="บรรยากาศภายนอก"></div>
   </div>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
 <script>
 (function(){
 'use strict';
 var $=function(s){return document.querySelector(s)};
-var stage=$('#stage'), pinsEl=$('#pins');
-if(typeof THREE==='undefined'){ $('#nogl').hidden=false; return; }
-
-var renderer = new THREE.WebGLRenderer({antialias:true, alpha:true});
+var stage=$('#stage'), pinsEl=$('#pins'), loadingEl=$('#loading');
+function fail(msg){ loadingEl.textContent=msg; loadingEl.classList.remove('done'); }
+if(typeof THREE==='undefined'){ fail('โหลดไลบรารี 3 มิติไม่สำเร็จ ลองรีเฟรชหน้านี้'); return; }
+var renderer;
+try{ renderer=new THREE.WebGLRenderer({antialias:true,alpha:true}); }catch(e){ fail('อุปกรณ์นี้แสดงภาพ 3 มิติไม่ได้ ลองเปิดในเบราว์เซอร์อื่น'); return; }
 renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,2));
 renderer.shadowMap.enabled=true; renderer.shadowMap.type=THREE.PCFSoftShadowMap;
 stage.appendChild(renderer.domElement);
 
 var clamp=function(v,a,b){return Math.max(a,Math.min(b,v))};
 
-/* ไอคอน */
+/* ---------- icons ---------- */
 var ICON={
  light:'<path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.2 1 2.1h5c0-.9.4-1.6 1-2.1A6 6 0 0 0 12 3z"/>',
  ac:'<rect x="3" y="4" width="18" height="7" rx="2"/><path d="M7 15c0 1.8-1.2 1.8-1.2 3.5M12 15c0 1.8-1.2 1.8-1.2 3.5M17 15c0 1.8-1.2 1.8-1.2 3.5"/>',
- temp:'<path d="M10 14V5a2 2 0 0 1 4 0v9a4 4 0 1 1-4 0z"/>',
- humid:'<path d="M12 3s6 6.5 6 11a6 6 0 0 1-12 0c0-4.5 6-11 6-11z"/>',
+ tv:'<rect x="3" y="5" width="18" height="12" rx="2"/><path d="M8 21h8"/>',
+ vacuum:'<circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="2.5"/><path d="M12 4v2"/>',
+ washer:'<rect x="4" y="3" width="16" height="18" rx="2"/><circle cx="12" cy="13.5" r="4"/><path d="M7 6.5h2"/>',
+ switch2:'<rect x="4" y="3" width="16" height="18" rx="2.5"/><rect x="8" y="6.5" width="3.2" height="4.5" rx="1"/><rect x="12.8" y="13" width="3.2" height="4.5" rx="1"/>',
+ switch1:'<rect x="4" y="3" width="16" height="18" rx="2.5"/><rect x="9" y="7" width="6" height="10" rx="1.5"/>',
+ plug:'<path d="M9 3v5M15 3v5M6 8h12v3a6 6 0 0 1-12 0V8zM12 17v4"/>',
  moon:'<path d="M20 14.5A8 8 0 0 1 9.5 4 8 8 0 1 0 20 14.5z"/>',
  sun:'<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M5 5l1.5 1.5M17.5 17.5L19 19M5 19l1.5-1.5M17.5 6.5L19 5"/>',
  dusk:'<path d="M3 18h18M7 18a5 5 0 0 1 10 0M12 7v2M4.5 11l1.5 1.5M19.5 11L18 12.5"/>',
@@ -156,165 +192,312 @@ var ICON={
 };
 var svg=function(k){return '<svg viewBox="0 0 24 24" aria-hidden="true">'+ICON[k]+'</svg>'};
 
-/* ฉาก กล้อง แสง */
+/* ---------- scene ---------- */
 var scene=new THREE.Scene();
 var camera=new THREE.OrthographicCamera(-10,10,10,-10,-100,200);
-var CTR=new THREE.Vector3(0,0,0);
-
-var amb=new THREE.AmbientLight(0xffffff,0.6); scene.add(amb);
-var sun=new THREE.DirectionalLight(0xffffff,0.8);
-sun.position.set(-5, 16, 7); sun.target.position.copy(CTR);
+var amb=new THREE.AmbientLight(0xffffff,.5); scene.add(amb);
+var sun=new THREE.DirectionalLight(0xffffff,.8);
+var CTR=new THREE.Vector3(2.2,1.0,-4.9);
+sun.position.set(CTR.x+6,16,CTR.z+8); sun.target.position.copy(CTR);
 sun.castShadow=true; sun.shadow.mapSize.set(2048,2048);
-var sc=sun.shadow.camera; sc.left=-12; sc.right=12; sc.top=12; sc.bottom=-12;
+var sc=sun.shadow.camera; sc.left=-10; sc.right=10; sc.top=10; sc.bottom=-10; sc.near=1; sc.far=45; sun.shadow.bias=-0.0008;
 scene.add(sun); scene.add(sun.target);
 
-/* โหลดโมเดล HOUSE.glb */
-var loader = new THREE.GLTFLoader();
-loader.load('HOUSE.glb', function(gltf) {
-  var model = gltf.scene;
+var ground=new THREE.Mesh(new THREE.PlaneGeometry(80,80),new THREE.ShadowMaterial({opacity:.3}));
+ground.rotation.x=-Math.PI/2; ground.position.set(CTR.x,-.52,CTR.z); ground.receiveShadow=true; scene.add(ground);
 
-  model.traverse(function(node) {
-    if (node.isMesh) {
-      node.castShadow = true;
-      node.receiveShadow = true;
-    }
-  });
+var house=new THREE.Group(); scene.add(house);
 
-  // จัดให้โมเดลอยู่ตรงกลางและปรับสเกลอัตโนมัติ
-  var box = new THREE.Box3().setFromObject(model);
-  var center = box.getCenter(new THREE.Vector3());
-  var size = box.getSize(new THREE.Vector3());
-  var maxDim = Math.max(size.x, size.y, size.z);
-  
-  var scale = 10 / maxDim; 
-  model.scale.set(scale, scale, scale);
-  model.position.set(-center.x * scale, -center.y * scale, -center.z * scale);
+(function(){
+  var m=new THREE.MeshStandardMaterial({color:0xdbe1e9,roughness:.9});
+  var slab=new THREE.Mesh(new THREE.BoxGeometry(4.6,.4,11.7),m); slab.position.set(2.2,-.3,-4.85); slab.receiveShadow=true; slab.castShadow=true; house.add(slab);
+  var strip=new THREE.Mesh(new THREE.BoxGeometry(4.4,.1,.62),new THREE.MeshStandardMaterial({color:0xc4ccd6,roughness:.85}));
+  strip.position.set(2.2,-.05,-10.31); strip.receiveShadow=true; house.add(strip);
+})();
 
-  scene.add(model);
-}, undefined, function(err) {
-  console.error(err);
-  $('#nogl').innerHTML = '<h2>เกิดข้อผิดพลาด!</h2><p>กรุณานำไฟล์ <b>HOUSE.glb</b> มาวางไว้ในโฟลเดอร์เดียวกับ HTML นี้นะครับ</p>';
-  $('#nogl').hidden = false;
+var winMat=new THREE.MeshStandardMaterial({color:0x0d1a30,emissive:0x0d1a30,emissiveIntensity:0,roughness:.2,transparent:true,opacity:.62,depthWrite:false,side:THREE.DoubleSide});
+var wallMat=new THREE.MeshStandardMaterial({color:0xdfeaff,transparent:true,opacity:.15,roughness:.15,side:THREE.DoubleSide,depthWrite:false,flatShading:true});
+var darkGlass=new THREE.MeshStandardMaterial({color:0x0a0e14,transparent:true,opacity:.4,roughness:.1,side:THREE.DoubleSide,depthWrite:false});
+var floorMat=new THREE.MeshStandardMaterial({color:0xcfd6df,roughness:.85,flatShading:true});
+var edgeMat=new THREE.LineBasicMaterial({color:0xffffff,transparent:true,opacity:.7});
+var tvMat=null;
+
+/* ---------- zones (rooms) ---------- */
+var ZONES=[
+ {id:'main',name:'ห้องหลัก',cx:2.2,cz:-5.25,w:4.1,d:4.1,temp:30.8},
+ {id:'kitchen',name:'ครัว',cx:2.8,cz:-9,w:3,d:2.9,temp:30.8},
+ {id:'bath',name:'ห้องน้ำ',cx:.65,cz:-8.5,w:1.05,d:3.8,temp:25.5},
+ {id:'balcony',name:'ระเบียง',cx:2.2,cz:-1.05,w:4.1,d:3.6,temp:34.0,open:true}
+];
+var zoneById={};
+ZONES.forEach(function(Z){
+  zoneById[Z.id]=Z; Z.lvl=0;
+  if(Z.noLight) return;
+  Z.light=new THREE.PointLight(0xffd6a0,0,8,1.5); Z.light.position.set(Z.cx,2.3,Z.cz); house.add(Z.light);
 });
 
-/* ข้อมูลหมุด (DEV) */
+/* ---------- devices ---------- */
 var DEV=[
- {id:'l1', type:'light', name:'ไฟเพดาน 1', p:[-2, 2, 2], on:true, val:80},
- {id:'l2', type:'light', name:'ไฟเพดาน 2', p:[2, 2, -2], on:false, val:80},
- {id:'l3', type:'light', name:'โคมไฟโต๊ะ', p:[-1, 1.5, -3], on:true, val:60},
- {id:'a1', type:'ac', name:'เครื่องปรับอากาศ', p:[0, 2.5, 0], on:true, val:25},
- {id:'s1', type:'sensor', kind:'temp', name:'เซนเซอร์อุณหภูมิ', p:[3, 1, 3]},
- {id:'s2', type:'sensor', kind:'humid', name:'เซนเซอร์ความชื้น', p:[-3, 0.5, 1]}
+ {id:'l1',zone:'main',type:'light',name:'ไฟในบ้าน',p:[2.2,2.5,-5.2],on:true,val:80,hidePin:true},
+ {id:'a1',zone:'main',type:'ac',name:'แอร์ผนัง',p:[1.57,2.85,-3.25],on:false,val:25,note:'สั่งผ่านรีโมตอินฟราเรด'},
+ {id:'sw_bed',zone:'main',type:'switch1',icon:'switch1',name:'สวิตช์ไฟห้องนอน',p:[0.2, 1.3, -4.5],on:false}, 
+ {id:'pl1',zone:'main',type:'plug',name:'ปลั๊กข้างเตียง',p:[.15,.55,-6.2],on:false},
+ {id:'t1',zone:'main',type:'tv',name:'ทีวี',p:[4.2,1.95,-4.95],on:false},
+ {id:'pl2',zone:'main',type:'plug',name:'ปลั๊กทีวี',p:[4.25,.5,-4.1],on:true},
+ {id:'sw1',zone:'main',type:'switch2',name:'สวิตช์ไฟทางเดิน และ นอกบ้าน',p:[4.25,1.3,-3.5],gangs:['l1','l3']},
+ {id:'l2',zone:'kitchen',type:'light',icon:'switch1',noDim:true,name:'สวิตช์ไฟครัว',p:[4.25,1.3,-7.9],on:false,val:100},
+ {id:'w1',zone:'bath',type:'washer',name:'เครื่องซักผ้า',p:[.58,1.05,-10.2],on:true,remain:42},
+ {id:'l3',zone:'balcony',type:'light',name:'ไฟนอกบ้าน (ระเบียง)',p:[2.2,2.4,-1.1],on:false,val:70,hidePin:true},
+ {id:'l4',zone:'bath',type:'light',icon:'switch1',noDim:true,name:'สวิตช์ไฟห้องน้ำ',p:[1.4,1.3,-6.55],on:false,val:100},
+ {id:'pl3',zone:'bath',type:'plug',name:'ปลั๊กซักผ้า',p:[.15,.75,-9.2],on:true,note:'ปิดปลั๊กแล้วเครื่องซักผ้าจะหยุดทำงาน'}
 ];
-var TYPE_COLOR={light:'#f2a516', ac:'#2a9df0', sensor:'#27b98a'};
+var TYPE_COLOR={plug:'#27b98a',switch1:'#f2a516',switch2:'#f2a516',light:'#f2a516',ac:'#2a9df0',tv:'#5b6cf0',vacuum:'#27b98a',washer:'#2a9df0'};
 
 DEV.forEach(function(d){
-  d.anchor=new THREE.Object3D(); d.anchor.position.set(d.p[0], d.p[1], d.p[2]); scene.add(d.anchor);
+  d.Z=zoneById[d.zone]; d.floor=1;
+  if(d.gangs) d.gangDevs=d.gangs.map(function(id){return DEV.filter(function(x){return x.id===id})[0]});
+  d.anchor=new THREE.Object3D(); d.anchor.position.set(d.p[0],d.p[1],d.p[2]); house.add(d.anchor);
+  if(d.type==='ac') d.Z.ac=d;
+  if(d.type==='light') d.Z.lightDev=d;
+});
+
+DEV.forEach(function(d){
   var el=document.createElement('button'); el.type='button'; el.className='pin';
   el.innerHTML='<span class="shape"></span><span class="val"></span>';
   el.style.setProperty('--pc',TYPE_COLOR[d.type]);
   el.addEventListener('click',function(ev){ev.stopPropagation(); onPin(d)});
-  pinsEl.appendChild(el); d.el=el; d.shape=el.firstChild; d.valEl=el.lastChild;
+  pinsEl.appendChild(el); d.el=el; d.shape=el.firstChild; d.valEl=el.lastChild; d.ic='';
+});
+ZONES.forEach(function(Z){
+  var t=document.createElement('div'); t.className='rtag'; pinsEl.appendChild(t); Z.tag=t;
+  Z.tagAnchor=new THREE.Object3D(); Z.tagAnchor.position.set(Z.cx,.1,Z.cz+Z.d/2-.25); house.add(Z.tagAnchor);
 });
 
-function isOn(d){ return d.type==='sensor'?true:!!d.on; }
-function sensorValue(d){ return d.kind==='temp'?'25.5°C':'62%'; }
+function isOn(d){ return d.gangDevs?d.gangDevs.some(function(g){return g.on}):!!d.on; }
+function statusText(d){
+  switch(d.type){
+    case 'light': return d.on?'เปิด · ความสว่าง '+d.val+'%':'ปิด';
+    case 'switch1': return d.on?'เปิด':'ปิด';
+    case 'ac': return d.on?'เปิด · ตั้งไว้ '+d.val+'°C':'ปิด';
+    case 'tv': return d.on?'เปิดอยู่':'ปิด';
+    case 'plug': return d.on?'เปิด':'ปิด';
+    case 'switch2': return 'ในบ้าน '+(d.gangDevs[0].on?'เปิด':'ปิด')+' · นอกบ้าน '+(d.gangDevs[1].on?'เปิด':'ปิด');
+    case 'washer': return d.on?'กำลังซัก · เหลือ '+Math.ceil(d.remain)+' นาที':'ว่าง';
+  }
+}
 function updatePin(d){
+  if(d.hidePin) d.el.hidden=true;
   var on=isOn(d);
   d.el.classList.toggle('on',on);
-  var k=d.type==='sensor'?d.kind:d.type; d.shape.innerHTML=svg(k);
-  if(d.type==='sensor'){ d.valEl.textContent=sensorValue(d); d.valEl.style.display='block'; }
+  var ik=d.icon||d.type;
+  if(d.ic!==ik){ d.shape.innerHTML=svg(ik); d.ic=ik; }
+  d.valEl.textContent=d.type==='washer'&&d.on?Math.ceil(d.remain)+' น.':'';
+  d.el.setAttribute('aria-label',d.name+' '+statusText(d));
+  d.el.setAttribute('aria-pressed',String(on));
+}
+
+/* ---------- state ---------- */
+var T=0, selected=null, sceneKey='day'; // Default scene based on screenshot
+var yaw0=-Math.PI/4, yaw=yaw0, zoom=1.1, zoomT=1.1;
+
+function power(){
+  var w=0; DEV.forEach(function(d){
+    if(d.type==='light'&&d.on) w+=14*d.val/100;
+    else if(d.type==='ac'&&d.on) w+=850;
+    else if(d.type==='tv'&&d.on) w+=110;
+    else if(d.type==='vacuum'&&d.on) w+=45;
+    else if(d.type==='washer'&&d.on) w+=450;
+  }); return w;
 }
 function refreshStats(){
-  var lights=DEV.filter(d=>d.type==='light'), on=lights.filter(d=>d.on).length;
+  if(DEV[7]) updatePin(DEV[7]);
+  var lights=DEV.filter(function(d){return d.type==='light' || d.type==='switch1'});
+  var on=lights.filter(function(d){return d.on}).length;
   $('#stLights').textContent=on+'/'+lights.length;
-  var w=on*14 + (DEV.filter(d=>d.type==='ac'&&d.on).length * 850);
-  $('#stPower').textContent=w+' W';
+  var w=power(); $('#stPower').textContent=w>=1000?(w/1000).toFixed(2)+' kW':Math.round(w)+' W';
+  var enc=ZONES.filter(function(z){return !z.open}), avg=enc.reduce(function(s,z){return s+z.temp},0)/enc.length;
+  $('#stTemp').textContent=avg.toFixed(1)+'°';
+  $('#allLights').textContent=on>0?'ปิดไฟทั้งหมด':'เปิดไฟทั้งหมด';
 }
-
-/* ล็อกกล้องให้ตายตัว เป็นมุม Isometric (ก้ม 35 องศา, เฉียง 45 องศา) */
-var yaw = Math.PI / 4; 
-var zoom = 1, zoomT = 1;
-
-function updateCamera(){
-  var w=stage.clientWidth||1, h=stage.clientHeight||1, a=w/h;
-  var hw=7.4, hh=hw/a; if(hh<5.4){hh=5.4;hw=hh*a}
-  hw/=zoom; hh/=zoom;
-  
-  camera.left=-hw; camera.right=hw; camera.top=hh; camera.bottom=-hh; 
-  camera.updateProjectionMatrix();
-  
-  var el = Math.atan(1 / Math.sqrt(2)); 
-  var d = 40;
-  
-  camera.position.set(
-    CTR.x + d * Math.cos(el) * Math.sin(yaw),
-    CTR.y + d * Math.sin(el),
-    CTR.z + d * Math.cos(el) * Math.cos(yaw)
-  );
-  camera.lookAt(CTR);
+function afterChange(d){ updatePin(d); refreshStats(); if(selected===d) renderPanel(); }
+function toggle(d){
+  if(d.gangDevs){
+    var any=isOn(d);
+    d.gangDevs.forEach(function(g){ g.on=!any; if(g.on&&g.val<10) g.val=80; updatePin(g); });
+    afterChange(d); return;
+  }
+  d.on=!d.on;
+  if(d.id==='pl3'&&!d.on){ var wm=DEV.find(x => x.type === 'washer'); if(wm) {wm.on=false; updatePin(wm);} }
+  if(d.type==='light'&&d.on&&d.val<10) d.val=80;
+  if(d.type==='washer'&&d.on&&d.remain<=0) d.remain=45;
+  afterChange(d);
 }
-new ResizeObserver(resize).observe(stage); 
-function resize(){ var w=stage.clientWidth,h=stage.clientHeight; if(w&&h) renderer.setSize(w,h,false); }
-resize();
-
-/* Input ซูมเข้า-ออก (ตัดการหมุนออก) */
-stage.addEventListener('wheel',function(e){
-  e.preventDefault();
-  zoomT=clamp(zoomT*Math.exp(-e.deltaY*0.0012), 0.5, 3.0);
-},{passive:false});
-
-var ptrs=new Map(), pinch=0;
-function pd(){var a=[...ptrs.values()]; return Math.hypot(a[0].x-a[1].x,a[0].y-a[1].y)||1}
-stage.addEventListener('pointerdown',function(e){ stage.setPointerCapture(e.pointerId); ptrs.set(e.pointerId,{x:e.clientX,y:e.clientY}); if(ptrs.size===2) pinch=pd(); });
-stage.addEventListener('pointermove',function(e){
-  var p=ptrs.get(e.pointerId); if(!p) return; p.x=e.clientX; p.y=e.clientY;
-  if(ptrs.size===2){ var d=pd(); zoomT=clamp(zoomT*d/pinch, 0.5, 3.0); pinch=d; }
-});
-stage.addEventListener('pointerup',function(e){ ptrs.delete(e.pointerId); if(ptrs.size===0) closePanel(); });
-stage.addEventListener('pointercancel',function(e){ ptrs.delete(e.pointerId); });
-
-/* Panel */
-var selected=null;
-function toggle(d){ if(d.type==='sensor')return; d.on=!d.on; updatePin(d); refreshStats(); if(selected===d) renderPanel(); }
 function onPin(d){ toggle(d); select(d); }
-function select(d){ selected=d; DEV.forEach(x=>x.el.classList.toggle('sel',x===d)); panel.hidden=false; renderPanel(); }
-function closePanel(){ selected=null; panel.hidden=true; DEV.forEach(x=>x.el.classList.remove('sel')); }
-function renderPanel(){
-  if(!selected) return; var d=selected;
-  $('#pName').textContent=d.name; $('#pSub').textContent=(d.on?'เปิด':'ปิด');
-  var ic=$('#pIcon'); ic.style.setProperty('--pc',TYPE_COLOR[d.type]); ic.innerHTML=svg((d.type==='sensor')?d.kind:d.type);
-  if(d.type==='sensor') pBody.innerHTML='<div class="big">'+sensorValue(d)+'</div>';
-  else pBody.innerHTML='<div class="row"><span>เปิด / ปิด</span><button class="sw" type="button" role="switch" aria-checked="'+d.on+'" data-act="toggle"><i></i></button></div>';
+
+/* ---------- panel ---------- */
+var panel=$('#panel'), pBody=$('#pBody');
+function select(d){
+  selected=d; DEV.forEach(function(x){x.el.classList.toggle('sel',x===d)});
+  panel.hidden=false; renderPanel();
 }
-pBody.addEventListener('click',e=>{ var b=e.target.closest('[data-act]'); if(b&&selected) toggle(selected); });
+function closePanel(){ selected=null; panel.hidden=true; DEV.forEach(function(x){x.el.classList.remove('sel')}); }
+function renderPanel(){
+  var d=selected; if(!d) return;
+  $('#pName').textContent=d.name;
+  $('#pSub').textContent=d.Z.name+' · '+statusText(d);
+  var ic=$('#pIcon'); ic.style.setProperty('--pc',TYPE_COLOR[d.type]); ic.innerHTML=svg(d.icon||d.type);
+  var label=d.type==='washer'?'เครื่องทำงาน':'เปิด / ปิด';
+  var h='<div class="row"><span>'+label+'</span><button class="sw" type="button" role="switch" aria-checked="'+isOn(d)+'" data-act="toggle" aria-label="สลับสถานะ"><i></i></button></div>';
+  if(d.type==='light'&&!d.noDim) h+='<div><div class="row"><label for="pRange">ความสว่าง</label><output id="pOut">'+d.val+'%</output></div><input id="pRange" type="range" min="10" max="100" value="'+d.val+'"></div>';
+  if(d.type==='ac') h+='<div class="step"><button type="button" data-act="dec" aria-label="ลดอุณหภูมิ">−</button><output id="pTemp">'+d.val+'°C</output><button type="button" data-act="inc" aria-label="เพิ่มอุณหภูมิ">+</button></div><div class="row"><span>อุณหภูมิห้องตอนนี้</span><output id="pRoomT">'+d.Z.temp.toFixed(1)+'°C</output></div>';
+  if(d.type==='washer') h+='<div class="row"><span>เวลาที่เหลือ</span><output id="pRemain">'+(d.on?Math.ceil(d.remain)+' นาที':'-')+'</output></div>';
+  if(d.note) h+='<p class="note">'+d.note+'</p>';
+  if(d.gangDevs){
+    h='';
+    d.gangDevs.forEach(function(g,i){
+      h+='<div class="row"><span>'+(i?'แก๊งที่ 2 · ไฟนอกบ้าน (ระเบียง)':'แก๊งที่ 1 · ไฟในบ้าน')+'</span><button class="sw" type="button" role="switch" aria-checked="'+g.on+'" data-act="gang'+i+'" aria-label="สลับแก๊งที่ '+(i+1)+'"><i></i></button></div>';
+    });
+    h+='<p class="note">กดหมุดเพื่อเปิดหรือปิดทั้งสองแก๊งพร้อมกัน หรือกดสวิตช์แต่ละแก๊งด้านบน</p>';
+  }
+  pBody.innerHTML=h;
+}
+pBody.addEventListener('click',function(e){
+  var b=e.target.closest('[data-act]'); if(!b||!selected) return; var d=selected, a=b.dataset.act;
+  if(a==='toggle') toggle(d);
+  if(a.indexOf('gang')===0&&d.gangDevs){
+    var g=d.gangDevs[+a.slice(4)]; g.on=!g.on; if(g.on&&g.val<10) g.val=80;
+    updatePin(g); afterChange(d);
+  }
+  if(a==='inc'||a==='dec'){ d.val=clamp(d.val+(a==='inc'?1:-1),16,30); afterChange(d); }
+});
+pBody.addEventListener('input',function(e){
+  if(e.target.id!=='pRange'||!selected) return; var d=selected, v=+e.target.value;
+  d.val=v; d.on=true;
+  $('#pOut').textContent=v+'%'; $('#pSub').textContent=d.Z.name+' · '+statusText(d);
+  updatePin(d); refreshStats();
+  var sw=pBody.querySelector('.sw'); if(sw) sw.setAttribute('aria-checked','true');
+});
 $('#pClose').addEventListener('click',closePanel);
 
-$('#allLights').addEventListener('click',function(){
-  var lights=DEV.filter(d=>d.type==='light'), any=lights.some(d=>d.on);
-  lights.forEach(d=>{ d.on=!any; updatePin(d); }); refreshStats(); if(selected) renderPanel();
-});
-
-/* สภาพอากาศ (Scenes) */
-var SCENES={ rain:{label:'ฝนตก',icon:'rain'}, night:{label:'กลางคืน',icon:'moon'}, day:{label:'กลางวัน',icon:'sun'} };
-Object.keys(SCENES).forEach(k=>{
+/* ---------- scenes ---------- */
+var SCENES={
+ night:{label:'กลางคืน',out:27,amb:[0x7f95bd,.46],sun:[0xa5b8ff,.42],win:[0x0d1a30,0],icon:'moon'},
+ day:{label:'กลางวัน',out:34,amb:[0xffffff,.82],sun:[0xfff1da,.95],win:[0xa6d6ff,.5],icon:'sun'},
+ dusk:{label:'พลบค่ำ',out:30,amb:[0xffcba0,.58],sun:[0xff9d5c,.8],win:[0xffb874,.4],icon:'dusk'},
+ rain:{label:'ฝนตก',out:26,amb:[0xb9c9e2,.58],sun:[0xcbd9f0,.32],win:[0x8296b0,.2],icon:'rain'}
+};
+var cur={amb:new THREE.Color(0x7f95bd),ambI:.46,sun:new THREE.Color(0xa5b8ff),sunI:.42,win:new THREE.Color(0x0d1a30),winI:0,out:27};
+var scenesEl=$('#scenes');
+Object.keys(SCENES).forEach(function(k){
   var b=document.createElement('button'); b.type='button'; b.className='chip'; b.dataset.scene=k;
-  b.innerHTML=svg(SCENES[k].icon)+SCENES[k].label; $('#scenes').appendChild(b);
+  b.innerHTML=svg(SCENES[k].icon)+SCENES[k].label; scenesEl.appendChild(b);
 });
 function setScene(k){
-  document.querySelectorAll('.sky').forEach(s=>s.classList.toggle('on',s.dataset.sky===k));
+  sceneKey=k; var S=SCENES[k];
+  document.querySelectorAll('.sky').forEach(function(s){s.classList.toggle('on',s.dataset.sky===k)});
   $('#rain').classList.toggle('on',k==='rain');
-  document.querySelectorAll('.chip').forEach(b=>b.setAttribute('aria-pressed',b.dataset.scene===k));
-  $('#wx').innerHTML=svg(SCENES[k].icon)+'<span>'+SCENES[k].label+' · 26°C · กรุงเทพฯ</span>';
+  scenesEl.querySelectorAll('.chip').forEach(function(b){b.setAttribute('aria-pressed',String(b.dataset.scene===k))});
+  $('#wx').innerHTML=svg(S.icon)+'<span>'+S.label+' · '+S.out+'°C · กรุงเทพฯ</span>';
 }
-$('#scenes').addEventListener('click',e=>{var b=e.target.closest('.chip'); if(b) setScene(b.dataset.scene)});
-setScene('rain');
+scenesEl.addEventListener('click',function(e){var b=e.target.closest('.chip'); if(b) setScene(b.dataset.scene)});
 
-/* เรนเดอร์ลูป */
-var last=performance.now();
+$('#allLights').addEventListener('click',function(){
+  var lights=DEV.filter(function(d){return d.type==='light' || d.type==='switch1'}), any=lights.some(function(d){return d.on});
+  lights.forEach(function(d){d.on=!any; if(d.on&&d.val<10) d.val=80; updatePin(d)});
+  refreshStats(); if(selected) renderPanel();
+});
+$('#resetView').addEventListener('click',function(){zoomT=1.1});
+var solid=false;
+$('#wallMode').addEventListener('click',function(){
+  solid=!solid; this.textContent=solid?'ผนังกระจก':'ผนังทึบ'; this.setAttribute('aria-pressed',String(solid));
+  wallMat.opacity=solid?.97:.15; wallMat.depthWrite=solid; wallMat.color.set(solid?0xf2f4f7:0xdfeaff); wallMat.needsUpdate=true;
+  wallEdges.forEach(function(e){e.visible=!solid});
+});
+var wallEdges=[];
+
+/* ---------- camera + input ---------- */
+function updateCamera(){
+  var w=stage.clientWidth||1,h=stage.clientHeight||1,a=w/h;
+  var hw=a<.8?6.4:7.4,hh=hw/a; if(hh<5.6){hh=5.6;hw=hh*a}
+  hw/=zoom; hh/=zoom;
+  camera.left=-hw;camera.right=hw;camera.top=hh;camera.bottom=-hh;camera.updateProjectionMatrix();
+  
+  var el=Math.atan(1/Math.sqrt(2)), d=40; // ล็อกมุมกดตายตัวที่ 35.26 องศา (Isometric แท้)
+  camera.position.set(CTR.x+d*Math.cos(el)*Math.sin(yaw),CTR.y+d*Math.sin(el),CTR.z+d*Math.cos(el)*Math.cos(yaw));
+  camera.lookAt(CTR);
+}
+function resize(){ var w=stage.clientWidth,h=stage.clientHeight; if(w&&h) renderer.setSize(w,h,false); }
+new ResizeObserver(resize).observe(stage); resize();
+
+var ptrs=new Map(), pinch=0;
+function pd(){var a=[...ptrs.values()];return Math.hypot(a[0].x-a[1].x,a[0].y-a[1].y)||1}
+stage.addEventListener('pointerdown',function(e){stage.setPointerCapture(e.pointerId);ptrs.set(e.pointerId,{x:e.clientX,y:e.clientY});if(ptrs.size===2)pinch=pd()});
+stage.addEventListener('pointermove',function(e){
+  var p=ptrs.get(e.pointerId); if(!p) return; p.x=e.clientX; p.y=e.clientY;
+  if(ptrs.size===2){var d=pd(); zoomT=clamp(zoomT*d/pinch,.6,3.0); pinch=d;} // เปิดให้ซูมเข้าออกอย่างเดียว
+});
+function endPtr(e){ if(!ptrs.has(e.pointerId)) return; ptrs.delete(e.pointerId); if(ptrs.size===0) closePanel(); }
+stage.addEventListener('pointerup',endPtr); stage.addEventListener('pointercancel',function(e){ptrs.delete(e.pointerId)});
+stage.addEventListener('wheel',function(e){e.preventDefault();zoomT=clamp(zoomT*Math.exp(-e.deltaY*.0012),.6,3.0)},{passive:false});
+
+/* ---------- model ---------- */
+function colorFor(m){ return new THREE.Color(m.color[0],m.color[1],m.color[2]); }
+function buildModel(buf){
+  var jl=new DataView(buf).getUint32(0,true);
+  var meta=JSON.parse(new TextDecoder().decode(new Uint8Array(buf,4,jl))), base=4+jl;
+  var tvMeshes=[];
+  meta.meshes.forEach(function(m){
+    var q=new Uint16Array(buf,base+m.po,m.v*3), pos=new Float32Array(m.v*3), i;
+    var sx=(m.mx[0]-m.mn[0])/65535, sy=(m.mx[1]-m.mn[1])/65535, sz=(m.mx[2]-m.mn[2])/65535;
+    for(i=0;i<m.v;i++){ pos[i*3]=m.mn[0]+q[i*3]*sx; pos[i*3+1]=m.mn[1]+q[i*3+1]*sy; pos[i*3+2]=m.mn[2]+q[i*3+2]*sz; }
+    var idx=m.it===16?new Uint16Array(buf,base+m.io,m.i):new Uint32Array(buf,base+m.io,m.i);
+    var g=new THREE.BufferGeometry(); g.setAttribute('position',new THREE.BufferAttribute(pos,3)); g.setIndex(new THREE.BufferAttribute(idx,1));
+    var mat, mesh;
+    if(m.kind==='wall'){
+      mesh=new THREE.Mesh(g,wallMat); mesh.renderOrder=3;
+      var ed=new THREE.LineSegments(new THREE.EdgesGeometry(g,30),edgeMat); ed.renderOrder=4; house.add(ed); wallEdges.push(ed);
+    }else if(m.kind==='floor'){
+      mesh=new THREE.Mesh(g,floorMat); mesh.receiveShadow=true;
+    }else if(m.kind==='glass'){
+      mesh=new THREE.Mesh(g,m.top.indexOf('Windows')===0?winMat:darkGlass); mesh.renderOrder=2;
+    }else{
+      mat=new THREE.MeshStandardMaterial({color:colorFor(m),roughness:.65,metalness:.05,flatShading:true,side:THREE.DoubleSide});
+      mesh=new THREE.Mesh(g,mat); mesh.castShadow=true; mesh.receiveShadow=true;
+      if(m.top.indexOf('Sony')===0){ mat.emissive=new THREE.Color(0x000000); tvMeshes.push(mat); }
+    }
+    house.add(mesh);
+  });
+  return tvMeshes;
+}
+
+/* ---------- loop ---------- */
+var tmpV=new THREE.Vector3(), tmpC=new THREE.Color(), last=performance.now(), labelT=0, washT=0;
+var tvMats=[];
 function frame(now){
-  var dt=Math.min(.05,(now-last)/1000); last=now;
-  zoom+=(zoomT-zoom)*(1-Math.exp(-dt*8));
+  var dt=Math.min(.05,(now-last)/1000); last=now; T+=dt;
+  var k=1-Math.exp(-dt*8);
+  zoom+=(zoomT-zoom)*k;
+
+  var S=SCENES[sceneKey], ks=1-Math.exp(-dt*2.5);
+  cur.amb.lerp(tmpC.set(S.amb[0]),ks); cur.ambI+=(S.amb[1]-cur.ambI)*ks;
+  cur.sun.lerp(tmpC.set(S.sun[0]),ks); cur.sunI+=(S.sun[1]-cur.sunI)*ks;
+  cur.win.lerp(tmpC.set(S.win[0]),ks); cur.winI+=(S.win[1]-cur.winI)*ks; cur.out+=(S.out-cur.out)*ks;
+  amb.color.copy(cur.amb); amb.intensity=cur.ambI; sun.color.copy(cur.sun); sun.intensity=cur.sunI;
+  winMat.color.copy(cur.win); winMat.emissive.copy(cur.win); winMat.emissiveIntensity=cur.winI;
+
+  var kl=1-Math.exp(-dt*5);
+  ZONES.forEach(function(Z){
+    var ld=Z.lightDev, tgt=ld&&ld.on?ld.val/100:0;
+    Z.lvl+=(tgt-Z.lvl)*kl;
+    if(Z.light){ Z.light.intensity=Z.lvl*1.6; }
+    var acOn=Z.ac&&Z.ac.on, tt=acOn?Z.ac.val:cur.out-1.5;
+    Z.temp+=(tt-Z.temp)*(1-Math.exp(-dt*(acOn?.05:.01)));
+  });
+
+  var tv=DEV[4]; tvMats.forEach(function(m){
+    if(tv.on){ tmpC.setHSL((T*.04)%1,.55,.55); m.emissive.copy(tmpC); m.emissiveIntensity=.9; } else m.emissiveIntensity=0; });
+
+  var wsh=DEV[9]; if(wsh.on){ washT+=dt; if(washT>=6){ washT=0; wsh.remain-=1; if(wsh.remain<=0){ wsh.remain=0; wsh.on=false; } updatePin(wsh); refreshStats(); if(selected===wsh) renderPanel(); } }
 
   updateCamera(); renderer.render(scene,camera);
 
@@ -324,14 +507,38 @@ function frame(now){
     var x=(tmpV.x*.5+.5)*w, y=(-tmpV.y*.5+.5)*h;
     d.el.style.transform='translate('+x.toFixed(1)+'px,'+y.toFixed(1)+'px)'; d.el.style.zIndex=Math.round(y);
   });
+  ZONES.forEach(function(Z){
+    Z.tagAnchor.getWorldPosition(tmpV); tmpV.project(camera);
+    var x=(tmpV.x*.5+.5)*w, y=(-tmpV.y*.5+.5)*h;
+    Z.tag.style.transform='translate('+x.toFixed(1)+'px,'+y.toFixed(1)+'px) translate(-50%,0)';
+  });
 
+  labelT+=dt; if(labelT>.5){ labelT=0;
+    ZONES.forEach(function(Z){ Z.tag.textContent=Z.name+'  '+(Z.open?cur.out:Z.temp).toFixed(1)+'°'; });
+    refreshStats();
+    if(selected){
+      var rt=$('#pRoomT'); if(rt) rt.textContent=selected.Z.temp.toFixed(1)+'°C';
+      var rm=$('#pRemain'); if(rm&&selected.type==='washer') rm.textContent=selected.on?Math.ceil(selected.remain)+' นาที':'-';
+    }
+  }
   requestAnimationFrame(frame);
 }
 
-DEV.forEach(updatePin); refreshStats();
-var tmpV=new THREE.Vector3();
-requestAnimationFrame(t=>{last=t;frame(t)});
+/* ---------- start ---------- */
+DEV.forEach(updatePin);
+setScene('day');
+var S0=SCENES[sceneKey]; cur.amb.set(S0.amb[0]); cur.ambI=S0.amb[1]; cur.sun.set(S0.sun[0]); cur.sunI=S0.sun[1]; cur.win.set(S0.win[0]); cur.winI=S0.win[1]; cur.out=S0.out;
+ZONES.forEach(function(Z){ Z.tag.textContent=Z.name; });
+refreshStats();
+
+fetch('house.txt').then(function(r){ if(!r.ok) throw new Error('http '+r.status); return r.text(); }).then(function(txt){
+  var bin=atob(txt.trim()), u8=new Uint8Array(bin.length);
+  for(var i=0;i<bin.length;i++) u8[i]=bin.charCodeAt(i);
+  tvMats=buildModel(u8.buffer);
+  loadingEl.classList.add('done');
+  last=performance.now(); requestAnimationFrame(frame);
+}).catch(function(err){ fail('โหลดโมเดลห้องไม่สำเร็จ ลองรีเฟรชหน้านี้'); });
 })();
 </script>
-</body>
-</html>
+
+</body></html>
