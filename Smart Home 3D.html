@@ -1,0 +1,337 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Smart Home 3D - Isometric</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Prompt:wght@400;500;600&family=IBM+Plex+Sans+Thai:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0e141c; --ink:#f3f6fa; --ink-dim:rgba(243,246,250,.66); --glass:rgba(10,16,26,.48);
+  --glass-strong:rgba(10,16,26,.72); --line:rgba(255,255,255,.16); --paper:#f7f9fc;
+  --paper-ink:#0e141c; --amber:#f2a516; --cool:#2a9df0; --mint:#27b98a;
+  --font-display:'Prompt','IBM Plex Sans Thai',system-ui,sans-serif;
+  --font-body:'IBM Plex Sans Thai','Prompt',system-ui,sans-serif;
+  color-scheme:dark;
+}
+html,body{height:100%;overflow:hidden;margin:0;padding:0;font:14px var(--font-body);background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased}
+*{box-sizing:border-box} button{font:inherit;color:inherit;cursor:pointer}
+:focus-visible{outline:2px solid #fff;outline-offset:2px}
+.app{position:relative;height:100%;overflow:hidden;background:var(--bg)}
+.sky{position:absolute;inset:0;opacity:0;transition:opacity 1.2s ease}
+.sky.on{opacity:1}
+.sky.night{background:radial-gradient(1.2px 1.2px at 12% 14%,rgba(255,255,255,.7),transparent),radial-gradient(1px 1px at 28% 8%,rgba(255,255,255,.5),transparent),linear-gradient(180deg,#0b1017 0%,#16212e 55%,#26384b 100%)}
+.sky.day{background:linear-gradient(180deg,#1b64b8 0%,#4a8fd3 55%,#8fbbe6 100%)}
+.sky.dusk{background:linear-gradient(180deg,#4d3322 0%,#8a5e3a 50%,#c99a68 100%)}
+.sky.rain{background:linear-gradient(180deg,#2c3846 0%,#4d6076 55%,#8196b0 100%)}
+.rain{position:absolute;inset:0;opacity:0;transition:opacity 1.2s;pointer-events:none;background:repeating-linear-gradient(100deg,transparent 0 23px,rgba(210,226,255,.2) 23px 24px);background-size:300px 300px;animation:rain .8s linear infinite}
+.rain.on{opacity:1} @keyframes rain{to{background-position:-60px 300px}}
+
+#stage{position:absolute;inset:0;touch-action:none;cursor:default} 
+#stage canvas{display:block;width:100%;height:100%}
+#pins{position:absolute;inset:0;pointer-events:none;overflow:hidden}
+
+.pin{position:absolute;left:0;top:0;width:0;height:0;padding:0;border:0;background:none;pointer-events:auto;overflow:visible;--pc:var(--amber);animation:pinIn .35s ease both}
+.pin[hidden]{display:none}
+.pin .shape{position:absolute;left:-17px;top:-41px;width:34px;height:34px;border-radius:50% 50% 50% 3px;transform:rotate(-45deg);display:grid;place-items:center;background:var(--glass-strong);border:1px solid var(--line);box-shadow:0 6px 14px rgba(0,0,0,.28);backdrop-filter:blur(6px);transition:background .25s,box-shadow .25s,scale .15s}
+.pin .shape svg{width:18px;height:18px;transform:rotate(45deg);fill:none;stroke:rgba(255,255,255,.7);stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;transition:stroke .25s}
+.pin.on .shape{background:var(--paper);border-color:#fff;box-shadow:0 6px 16px rgba(0,0,0,.3),0 0 18px color-mix(in srgb,var(--pc) 55%,transparent)}
+.pin.on .shape svg{stroke:var(--pc)}
+.pin.sel .shape{scale:1.16;box-shadow:0 0 0 3px rgba(255,255,255,.55),0 6px 16px rgba(0,0,0,.3)}
+.pin .val{position:absolute;left:21px;top:-37px;font:500 11px/1 var(--font-display);padding:4px 7px;border-radius:999px;background:var(--glass-strong);border:1px solid var(--line);white-space:nowrap}
+.pin .val:empty{display:none}
+@keyframes pinIn{from{opacity:0;translate:0 8px}to{opacity:1;translate:0 0}}
+
+.ui{position:absolute;inset:0;pointer-events:none;padding:20px}
+.ui>*{pointer-events:auto}
+.head{position:absolute;top:20px;left:20px;right:20px;display:flex;justify-content:space-between;align-items:flex-start}
+.eyebrow{font:500 11px/1 var(--font-display);letter-spacing:.18em;color:var(--ink-dim)}
+h1{margin:6px 0 0;font:600 32px/1.1 var(--font-display)}
+.wx{display:flex;align-items:center;gap:8px;margin-top:8px;color:var(--ink-dim);font-size:13px}
+.wx svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.8}
+.stats{display:flex;gap:22px;margin-top:16px}
+.stat small{display:block;font-size:11px;color:var(--ink-dim)}
+.stat b{font:500 18px/1 var(--font-display)}
+.hint{margin-top:14px;max-width:280px;font-size:12px;line-height:1.5;color:var(--ink-dim)}
+
+.actions{display:flex;gap:8px;justify-content:flex-end}
+.btn{height:38px;padding:0 14px;border-radius:999px;background:var(--glass);border:1px solid var(--line);backdrop-filter:blur(10px);font:500 13px var(--font-display);transition:background .2s}
+.btn:hover{background:var(--glass-strong)}
+
+.scenes{position:absolute;bottom:20px;left:50%;translate:-50% 0;display:flex;gap:8px;padding:2px}
+.chip{display:flex;align-items:center;gap:7px;height:40px;padding:0 14px;border-radius:999px;background:var(--glass);border:1px solid var(--line);backdrop-filter:blur(10px);font:500 13px var(--font-display);transition:background .2s,color .2s}
+.chip svg{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round}
+.chip[aria-pressed="true"]{background:var(--paper);color:var(--paper-ink);border-color:#fff}
+
+#nogl{position:absolute;inset:0;display:grid;place-items:center;padding:24px;text-align:center;background:rgba(0,0,0,0.8);color:#fff;z-index:99}
+#nogl[hidden]{display:none}
+
+.panel{position:absolute;left:20px;bottom:76px;width:320px;border-radius:22px;background:var(--glass-strong);border:1px solid var(--line);backdrop-filter:blur(16px);padding:16px;box-shadow:0 18px 40px rgba(0,0,0,.35)}
+.panel[hidden]{display:none}
+.ph{display:flex;align-items:center;gap:12px}
+.pico{width:42px;height:42px;border-radius:14px;display:grid;place-items:center;background:var(--paper);flex:none}
+.pico svg{width:22px;height:22px;fill:none;stroke:var(--pc,var(--amber));stroke-width:1.8}
+.pt{flex:1} .pt h2{margin:0;font:500 16px var(--font-display)} .pt p{margin:3px 0 0;font-size:12.5px;color:var(--ink-dim)}
+#pClose{width:32px;height:32px;border-radius:50%;border:0;background:rgba(255,255,255,.1);font-size:18px}
+.pb{display:grid;gap:14px;margin-top:14px}
+.row{display:flex;align-items:center;justify-content:space-between;font-size:13px}
+.sw{width:50px;height:30px;border-radius:999px;border:0;background:rgba(255,255,255,.2);position:relative;transition:background .2s}
+.sw i{position:absolute;top:3px;left:3px;width:24px;height:24px;border-radius:50%;background:#fff;transition:translate .2s}
+.sw[aria-checked="true"]{background:var(--mint)} .sw[aria-checked="true"] i{translate:20px 0}
+.big{font:500 30px/1 var(--font-display);text-align:center}
+</style>
+</head>
+<body>
+
+<div class="app">
+  <div class="sky night" data-sky="night"></div>
+  <div class="sky day" data-sky="day"></div>
+  <div class="sky dusk" data-sky="dusk"></div>
+  <div class="sky rain" data-sky="rain"></div>
+  <div class="rain" id="rain"></div>
+
+  <div id="stage" aria-label="โมเดลบ้าน 3 มิติ (Isometric View)"></div>
+  <div id="pins"></div>
+  <div id="nogl" hidden></div>
+
+  <div class="ui">
+    <div class="head">
+      <div>
+        <div class="eyebrow">SMART HOME · ISOMETRIC VIEW</div>
+        <h1>บ้านของฉัน</h1>
+        <div class="wx" id="wx"></div>
+        <div class="stats">
+          <div class="stat"><small>ไฟที่เปิด</small><b id="stLights">0/4</b></div>
+          <div class="stat"><small>กำลังไฟ</small><b id="stPower">0 W</b></div>
+          <div class="stat"><small>อุณหภูมิในบ้าน</small><b id="stTemp">26.5°</b></div>
+        </div>
+        <p class="hint">เลื่อนล้อเมาส์หรือหนีบนิ้วเพื่อซูมเข้า-ออก (ล็อกมุมกล้อง Isometric แบบภาพตัวอย่าง) กดหมุดเพื่อเปิดปิดค่าอุปกรณ์</p>
+      </div>
+      <div class="actions">
+        <button class="btn" id="allLights" type="button">ปิดไฟทั้งหมด</button>
+      </div>
+    </div>
+
+    <aside class="panel" id="panel" hidden>
+      <div class="ph">
+        <span class="pico" id="pIcon"></span>
+        <div class="pt"><h2 id="pName"></h2><p id="pSub"></p></div>
+        <button type="button" id="pClose" aria-label="ปิด">×</button>
+      </div>
+      <div class="pb" id="pBody"></div>
+    </aside>
+
+    <div class="scenes" id="scenes"></div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+<script>
+(function(){
+'use strict';
+var $=function(s){return document.querySelector(s)};
+var stage=$('#stage'), pinsEl=$('#pins');
+if(typeof THREE==='undefined'){ $('#nogl').hidden=false; return; }
+
+var renderer = new THREE.WebGLRenderer({antialias:true, alpha:true});
+renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,2));
+renderer.shadowMap.enabled=true; renderer.shadowMap.type=THREE.PCFSoftShadowMap;
+stage.appendChild(renderer.domElement);
+
+var clamp=function(v,a,b){return Math.max(a,Math.min(b,v))};
+
+/* ไอคอน */
+var ICON={
+ light:'<path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.2 1 2.1h5c0-.9.4-1.6 1-2.1A6 6 0 0 0 12 3z"/>',
+ ac:'<rect x="3" y="4" width="18" height="7" rx="2"/><path d="M7 15c0 1.8-1.2 1.8-1.2 3.5M12 15c0 1.8-1.2 1.8-1.2 3.5M17 15c0 1.8-1.2 1.8-1.2 3.5"/>',
+ temp:'<path d="M10 14V5a2 2 0 0 1 4 0v9a4 4 0 1 1-4 0z"/>',
+ humid:'<path d="M12 3s6 6.5 6 11a6 6 0 0 1-12 0c0-4.5 6-11 6-11z"/>',
+ moon:'<path d="M20 14.5A8 8 0 0 1 9.5 4 8 8 0 1 0 20 14.5z"/>',
+ sun:'<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M5 5l1.5 1.5M17.5 17.5L19 19M5 19l1.5-1.5M17.5 6.5L19 5"/>',
+ dusk:'<path d="M3 18h18M7 18a5 5 0 0 1 10 0M12 7v2M4.5 11l1.5 1.5M19.5 11L18 12.5"/>',
+ rain:'<path d="M7 15a4 4 0 0 1 .5-8 5.5 5.5 0 0 1 10.5 1.5A3.5 3.5 0 0 1 17 15M8 18l-1 3M12 18l-1 3M16 18l-1 3"/>'
+};
+var svg=function(k){return '<svg viewBox="0 0 24 24" aria-hidden="true">'+ICON[k]+'</svg>'};
+
+/* ฉาก กล้อง แสง */
+var scene=new THREE.Scene();
+var camera=new THREE.OrthographicCamera(-10,10,10,-10,-100,200);
+var CTR=new THREE.Vector3(0,0,0);
+
+var amb=new THREE.AmbientLight(0xffffff,0.6); scene.add(amb);
+var sun=new THREE.DirectionalLight(0xffffff,0.8);
+sun.position.set(-5, 16, 7); sun.target.position.copy(CTR);
+sun.castShadow=true; sun.shadow.mapSize.set(2048,2048);
+var sc=sun.shadow.camera; sc.left=-12; sc.right=12; sc.top=12; sc.bottom=-12;
+scene.add(sun); scene.add(sun.target);
+
+/* โหลดโมเดล HOUSE.glb */
+var loader = new THREE.GLTFLoader();
+loader.load('HOUSE.glb', function(gltf) {
+  var model = gltf.scene;
+
+  model.traverse(function(node) {
+    if (node.isMesh) {
+      node.castShadow = true;
+      node.receiveShadow = true;
+    }
+  });
+
+  // จัดให้โมเดลอยู่ตรงกลางและปรับสเกลอัตโนมัติ
+  var box = new THREE.Box3().setFromObject(model);
+  var center = box.getCenter(new THREE.Vector3());
+  var size = box.getSize(new THREE.Vector3());
+  var maxDim = Math.max(size.x, size.y, size.z);
+  
+  var scale = 10 / maxDim; 
+  model.scale.set(scale, scale, scale);
+  model.position.set(-center.x * scale, -center.y * scale, -center.z * scale);
+
+  scene.add(model);
+}, undefined, function(err) {
+  console.error(err);
+  $('#nogl').innerHTML = '<h2>เกิดข้อผิดพลาด!</h2><p>กรุณานำไฟล์ <b>HOUSE.glb</b> มาวางไว้ในโฟลเดอร์เดียวกับ HTML นี้นะครับ</p>';
+  $('#nogl').hidden = false;
+});
+
+/* ข้อมูลหมุด (DEV) */
+var DEV=[
+ {id:'l1', type:'light', name:'ไฟเพดาน 1', p:[-2, 2, 2], on:true, val:80},
+ {id:'l2', type:'light', name:'ไฟเพดาน 2', p:[2, 2, -2], on:false, val:80},
+ {id:'l3', type:'light', name:'โคมไฟโต๊ะ', p:[-1, 1.5, -3], on:true, val:60},
+ {id:'a1', type:'ac', name:'เครื่องปรับอากาศ', p:[0, 2.5, 0], on:true, val:25},
+ {id:'s1', type:'sensor', kind:'temp', name:'เซนเซอร์อุณหภูมิ', p:[3, 1, 3]},
+ {id:'s2', type:'sensor', kind:'humid', name:'เซนเซอร์ความชื้น', p:[-3, 0.5, 1]}
+];
+var TYPE_COLOR={light:'#f2a516', ac:'#2a9df0', sensor:'#27b98a'};
+
+DEV.forEach(function(d){
+  d.anchor=new THREE.Object3D(); d.anchor.position.set(d.p[0], d.p[1], d.p[2]); scene.add(d.anchor);
+  var el=document.createElement('button'); el.type='button'; el.className='pin';
+  el.innerHTML='<span class="shape"></span><span class="val"></span>';
+  el.style.setProperty('--pc',TYPE_COLOR[d.type]);
+  el.addEventListener('click',function(ev){ev.stopPropagation(); onPin(d)});
+  pinsEl.appendChild(el); d.el=el; d.shape=el.firstChild; d.valEl=el.lastChild;
+});
+
+function isOn(d){ return d.type==='sensor'?true:!!d.on; }
+function sensorValue(d){ return d.kind==='temp'?'25.5°C':'62%'; }
+function updatePin(d){
+  var on=isOn(d);
+  d.el.classList.toggle('on',on);
+  var k=d.type==='sensor'?d.kind:d.type; d.shape.innerHTML=svg(k);
+  if(d.type==='sensor'){ d.valEl.textContent=sensorValue(d); d.valEl.style.display='block'; }
+}
+function refreshStats(){
+  var lights=DEV.filter(d=>d.type==='light'), on=lights.filter(d=>d.on).length;
+  $('#stLights').textContent=on+'/'+lights.length;
+  var w=on*14 + (DEV.filter(d=>d.type==='ac'&&d.on).length * 850);
+  $('#stPower').textContent=w+' W';
+}
+
+/* ล็อกกล้องให้ตายตัว เป็นมุม Isometric (ก้ม 35 องศา, เฉียง 45 องศา) */
+var yaw = Math.PI / 4; 
+var zoom = 1, zoomT = 1;
+
+function updateCamera(){
+  var w=stage.clientWidth||1, h=stage.clientHeight||1, a=w/h;
+  var hw=7.4, hh=hw/a; if(hh<5.4){hh=5.4;hw=hh*a}
+  hw/=zoom; hh/=zoom;
+  
+  camera.left=-hw; camera.right=hw; camera.top=hh; camera.bottom=-hh; 
+  camera.updateProjectionMatrix();
+  
+  var el = Math.atan(1 / Math.sqrt(2)); 
+  var d = 40;
+  
+  camera.position.set(
+    CTR.x + d * Math.cos(el) * Math.sin(yaw),
+    CTR.y + d * Math.sin(el),
+    CTR.z + d * Math.cos(el) * Math.cos(yaw)
+  );
+  camera.lookAt(CTR);
+}
+new ResizeObserver(resize).observe(stage); 
+function resize(){ var w=stage.clientWidth,h=stage.clientHeight; if(w&&h) renderer.setSize(w,h,false); }
+resize();
+
+/* Input ซูมเข้า-ออก (ตัดการหมุนออก) */
+stage.addEventListener('wheel',function(e){
+  e.preventDefault();
+  zoomT=clamp(zoomT*Math.exp(-e.deltaY*0.0012), 0.5, 3.0);
+},{passive:false});
+
+var ptrs=new Map(), pinch=0;
+function pd(){var a=[...ptrs.values()]; return Math.hypot(a[0].x-a[1].x,a[0].y-a[1].y)||1}
+stage.addEventListener('pointerdown',function(e){ stage.setPointerCapture(e.pointerId); ptrs.set(e.pointerId,{x:e.clientX,y:e.clientY}); if(ptrs.size===2) pinch=pd(); });
+stage.addEventListener('pointermove',function(e){
+  var p=ptrs.get(e.pointerId); if(!p) return; p.x=e.clientX; p.y=e.clientY;
+  if(ptrs.size===2){ var d=pd(); zoomT=clamp(zoomT*d/pinch, 0.5, 3.0); pinch=d; }
+});
+stage.addEventListener('pointerup',function(e){ ptrs.delete(e.pointerId); if(ptrs.size===0) closePanel(); });
+stage.addEventListener('pointercancel',function(e){ ptrs.delete(e.pointerId); });
+
+/* Panel */
+var selected=null;
+function toggle(d){ if(d.type==='sensor')return; d.on=!d.on; updatePin(d); refreshStats(); if(selected===d) renderPanel(); }
+function onPin(d){ toggle(d); select(d); }
+function select(d){ selected=d; DEV.forEach(x=>x.el.classList.toggle('sel',x===d)); panel.hidden=false; renderPanel(); }
+function closePanel(){ selected=null; panel.hidden=true; DEV.forEach(x=>x.el.classList.remove('sel')); }
+function renderPanel(){
+  if(!selected) return; var d=selected;
+  $('#pName').textContent=d.name; $('#pSub').textContent=(d.on?'เปิด':'ปิด');
+  var ic=$('#pIcon'); ic.style.setProperty('--pc',TYPE_COLOR[d.type]); ic.innerHTML=svg((d.type==='sensor')?d.kind:d.type);
+  if(d.type==='sensor') pBody.innerHTML='<div class="big">'+sensorValue(d)+'</div>';
+  else pBody.innerHTML='<div class="row"><span>เปิด / ปิด</span><button class="sw" type="button" role="switch" aria-checked="'+d.on+'" data-act="toggle"><i></i></button></div>';
+}
+pBody.addEventListener('click',e=>{ var b=e.target.closest('[data-act]'); if(b&&selected) toggle(selected); });
+$('#pClose').addEventListener('click',closePanel);
+
+$('#allLights').addEventListener('click',function(){
+  var lights=DEV.filter(d=>d.type==='light'), any=lights.some(d=>d.on);
+  lights.forEach(d=>{ d.on=!any; updatePin(d); }); refreshStats(); if(selected) renderPanel();
+});
+
+/* สภาพอากาศ (Scenes) */
+var SCENES={ rain:{label:'ฝนตก',icon:'rain'}, night:{label:'กลางคืน',icon:'moon'}, day:{label:'กลางวัน',icon:'sun'} };
+Object.keys(SCENES).forEach(k=>{
+  var b=document.createElement('button'); b.type='button'; b.className='chip'; b.dataset.scene=k;
+  b.innerHTML=svg(SCENES[k].icon)+SCENES[k].label; $('#scenes').appendChild(b);
+});
+function setScene(k){
+  document.querySelectorAll('.sky').forEach(s=>s.classList.toggle('on',s.dataset.sky===k));
+  $('#rain').classList.toggle('on',k==='rain');
+  document.querySelectorAll('.chip').forEach(b=>b.setAttribute('aria-pressed',b.dataset.scene===k));
+  $('#wx').innerHTML=svg(SCENES[k].icon)+'<span>'+SCENES[k].label+' · 26°C · กรุงเทพฯ</span>';
+}
+$('#scenes').addEventListener('click',e=>{var b=e.target.closest('.chip'); if(b) setScene(b.dataset.scene)});
+setScene('rain');
+
+/* เรนเดอร์ลูป */
+var last=performance.now();
+function frame(now){
+  var dt=Math.min(.05,(now-last)/1000); last=now;
+  zoom+=(zoomT-zoom)*(1-Math.exp(-dt*8));
+
+  updateCamera(); renderer.render(scene,camera);
+
+  var w=stage.clientWidth,h=stage.clientHeight;
+  DEV.forEach(function(d){
+    d.anchor.getWorldPosition(tmpV); tmpV.project(camera);
+    var x=(tmpV.x*.5+.5)*w, y=(-tmpV.y*.5+.5)*h;
+    d.el.style.transform='translate('+x.toFixed(1)+'px,'+y.toFixed(1)+'px)'; d.el.style.zIndex=Math.round(y);
+  });
+
+  requestAnimationFrame(frame);
+}
+
+DEV.forEach(updatePin); refreshStats();
+var tmpV=new THREE.Vector3();
+requestAnimationFrame(t=>{last=t;frame(t)});
+})();
+</script>
+</body>
+</html>
